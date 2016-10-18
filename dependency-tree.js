@@ -2,9 +2,9 @@
 (function() {
   var levelHeight, maximum, parseConll, parseConll2009, under, wordHeight, wordWidth;
 
-  wordWidth = 150;
+  wordWidth = 170;
 
-  wordHeight = 40;
+  wordHeight = 100;
 
     treeHeight=0;
     treeWidth=0;
@@ -12,11 +12,11 @@
     
     
   levelHeight = function(level) {
-    return 2 + Math.pow(level, 1.8) * 25;
+    return 2 + Math.pow(level, 1.8) * 15;
   };
 
     window.treeInfo = function(data) {
-        treeWidth = wordWidth * data.length - wordWidth / 3;
+        treeWidth = wordWidth * data.length - wordWidth / 3.0;
         leftOffset = treeWidth / 40;
         edges = (function() {
             var _i, _len, _results;
@@ -77,7 +77,7 @@
         }).attr('x', function(d) {
             
             return leftOffset + wordWidth * d.id;
-        }).attr('y', treeHeight).attr('opacity', 0);
+        }).attr('y', treeHeight).attr('opacity', 0.3);
     }
 
     window.drawArcs = function (svg, data) {
@@ -134,12 +134,12 @@
             return leftOffset + wordWidth * d.id;
         }).attr('y', treeHeight - wordHeight).on('mouseover', function(d) {
             svg.selectAll('.word, .dependency, .edge, .arrow').classed('active', false);
-            svg.selectAll('.tag').attr('opacity', 0);
+            svg.selectAll('.tag').attr('opacity', 0.3);
             svg.selectAll(".w" + d.id).classed('active', true);
             return svg.select(".tag.w" + d.id).attr('opacity', 1);
         }).on('mouseout', function(d) {
             svg.selectAll('.word, .dependency, .edge, .arrow').classed('active', false);
-            return svg.selectAll('.tag').attr('opacity', 0);
+            return svg.selectAll('.tag').attr('opacity', 0.3);
         });
     }
     
@@ -159,7 +159,7 @@
         continue;
       }
       _ref1 = line.split('\t'), id = _ref1[0], word = _ref1[1], _ = _ref1[2], cpos = _ref1[3], fpos = _ref1[4], _ = _ref1[5], parent = _ref1[6], dependency = _ref1[7];
-      tag = cpos !== fpos ? cpos + ' ' + fpos : cpos;
+        tag = cpos; //cpos !== fpos ? cpos + ' ' + fpos : cpos;
       data.push({
         id: Number(id),
         word: word,

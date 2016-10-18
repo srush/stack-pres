@@ -66,7 +66,7 @@ function animationIM(base) {
             .duration(200)
             .style("font-weight", "normal")
             .style("font-size", "30")
-            .attr("transform", function(d, i) {console.log(d);
+            .attr("transform", function(d, i) {
                 return "translate("+ xScale(d.num)+ "," + yScale(1)+ ") " + "rotate(-50)";})  
         
             .text(function(d) {return d.word;} );
@@ -178,10 +178,9 @@ function animationIM(base) {
                     focus = [d.scores]
                 }
                 d.num = num -1;
-                console.log([].concat.apply([], focus)) 
                 make_text([all_data[im_num]], im_num, w, h, [].concat.apply([], focus), num);
                 if (num < 50 && global_im_num == im_num2) {
-                    setTimeout(function() {call(num+1);}, 500);
+                    setTimeout(function() {call(num+1);}, 300);
                 }
             }
             call(1);
@@ -194,8 +193,11 @@ function animationIM(base) {
         all_data = data        
         var cur = 10;
         show(cur);
+        d3.select("#im2latexbuttons").insert("a", ":first-child").text("next").on("click", function() { cur++; show(cur); return false;} );
 
-        d3.select("body").insert("a", ":first-child").attr("href", "#").text("last").on("click", function() { cur--; show(cur);} );
-        d3.select("body").insert("a", ":first-child").attr("href", "#").text("next").on("click", function() { cur++; show(cur);} );
+        d3.select("#im2latexbuttons").insert("a", ":first-child").text("  ").on("click", function() { cur--; show(cur); return false;} );
+        d3.select("#im2latexbuttons").insert("a", ":first-child").text("last").on("click", function() { cur--; show(cur); return false;} );
     });
 }
+
+

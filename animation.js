@@ -6,24 +6,24 @@ var mystack = stack();
 // var depsvg = deptree.append("svg");
 
 
-var conll = "1	President	President	PROPN	NNP	Number=Sing	2	compound	_	_\n\
-2	Bush	Bush	PROPN	NNP	Number=Sing	5	nsubj	_	_\n\
-3	on	on	ADP	IN	_	4	case	_	_\n\
-4	Tuesday	Tuesday	PROPN	NNP	Number=Sing	5	nmod	_	_\n\
-5	nominated	nominate	VERB	VBD	Mood=Ind|Tense=Past|VerbForm=Fin	0	root	_	_\n\
-6	two	two	NUM	CD	NumType=Card	7	nummod	_	_\n\
-7	individuals	individual	NOUN	NNS	Number=Plur	5	dobj	_	_\n\
-8	to	to	PART	TO	_	9	mark	_	_\n\
-9	replace	replace	VERB	VB	VerbForm=Inf	5	advcl	_	_\n\
-10	retiring	retire	VERB	VBG	VerbForm=Ger	11	amod	_	_\n\
-11	jurists	jurist	NOUN	NNS	Number=Plur	9	dobj	_	_\n\
-12	on	on	ADP	IN	_	14	case	_	_\n\
-13	federal	federal	ADJ	JJ	Degree=Pos	14	amod	_	_\n\
-14	courts	court	NOUN	NNS	Number=Plur	11	nmod	_	_\n\
-15	in	in	ADP	IN	_	18	case	_	_\n\
-16	the	the	DET	DT	Definite=Def|PronType=Art	18	det	_	_\n\
-17	Washington	Washington	PROPN	NNP	Number=Sing	18	compound	_	_\n\
-18	area	area	NOUN	NN	Number=Sing	14	nmod	_	SpaceAfter=No"
+var conll = "1	I	_	PRP	PRP	_	2	nsubj	_	_\n\
+2	thought	_	VB	VBD	_	0	null	_	_\n\
+3	it	_	PRP	PRP	_	5	nsubj	_	_\n\
+4	was	_	VB	VBD	_	5	cop	_	_\n\
+5	clear	_	JJ	JJ	_	2	ccomp	_	_\n\
+6	,	_	,	,	_	2	punct	_	_\n\
+7	but	_	CC	CC	_	2	cc	_	_\n\
+8	you	_	PRP	PRP	_	9	nsubj	_	_\n\
+9	know	_	VB	VBP	_	2	conj	_	_\n\
+10	,	_	,	,	_	12	punct	_	_\n\
+11	I	_	PRP	PRP	_	12	nsubj	_	_\n\
+12	know	_	VB	VBP	_	2	ccomp	_	_\n\
+13	what	_	WP	WP	_	16	dobj	_	_\n\
+14	I	_	PRP	PRP	_	16	nsubj	_	_\n\
+15	'm	_	VB	VBP	_	16	aux	_	_\n\
+16	running	_	VB	VBG	_	12	ccomp	_	_"
+
+console.log(conll)
 var data = parseConll(conll)
 svg = d3.select("#deptree");
 svg.selectAll('text, path').remove();
@@ -34,6 +34,14 @@ drawWords(base, data);
 addTags(base, data);
 drawArcs(base, data);
 
+svg = d3.select("#deptree0");
+svg.selectAll('text, path').remove();
+svg.attr('width', 1500).attr('height', 500);
+base = svg.append("g").attr("transform", "scale(0.5)");
+treeInfo(data);
+drawWords(base, data);
+addTags(base, data);
+
 const Event_list = {
     threshold_update: 'threshold_update',
     cell_hovered: 'cell_hovered',
@@ -41,123 +49,182 @@ const Event_list = {
     clear_selection:'clear_selection'
 };
 
+d3.json("draw.json", function(error, data) {
+    console.log(error);
 
-pcplot = new PCPlot("#lstm", 50, 50, {excluded_cells: [],
-                                      selected_cells: [1,2,3],
-                                      brush :[0,0],
-                                      threshold: 1,
-                                      draw_data: [{values : [0.1,0.2,0.3,0.4], index: 1},
-                                                  {index: 2, values: [0.3,0.2,0.4,0.1]},
-                                                  {index: 3, values: [0.3,0.2,-0.4,-0.1]} ]},
-                    {wordBrushScale: d3.scale.linear().domain([0,5]).range([0, 100]),
-                     xScale : d3.scale.linear().domain([0,10]).range([0, 1000]),
-                     yScale : d3.scale.linear().domain([1,-1]).range([0, 250]),
-                     hover_event_name: Event_list.cell_hovered
-                    } );
+    function draw (place, size) {
+        var selected = [];
+        var excluded = [];
+        for (var i = 0 ;i < size; ++i) {
+            selected.push(i);
+        }
+        data.draw_data = data.draw_data.slice(0, size);
+        data.selected_cells = selected;
+        console.log(data);
+        data.threshold = 0;
+        pcplot = new PCPlot(place, 50, 50, data,// {excluded_cells: [],
+                            //                   selected_cells: [1,2,3],
+                            //                   brush :[0,0],
+                            //                   threshold: 1,
+                            //                   draw_data: [{values : [0.1,0.2,0.3,0.4], index: 1},
+                            //                               {index: 2, values: [0.3,0.2,0.4,0.1]},
+                            //                               {index: 3, values: [0.3,0.2,-0.4,-0.1]} ]},
+                            {wordBrushScale: d3.scale.linear().domain([0,5]).range([0, 100]),
+                             xScale : d3.scale.linear().domain([0,10]).range([0, 1000]),
+                             yScale : d3.scale.linear().domain([1,-1]).range([0, 250]),
+                             hover_event_name: Event_list.cell_hovered
+                            } );
+        
+        
+        var eventHandler = $({});
+        // event_handler.bind("trigger", function() {})
+        
+        eventHandler.bind('cell_hovered', function (e, data) {
+            d3.select(place).selectAll('.cell_' + data.cell).classed('hover', data.active);
+        });
+        
+        pcplot.bind_event_handler(eventHandler);
+        pcplot.redraw({});
+        base = d3.select(place).append("g").attr("id", "b2").attr("transform", "translate("+(50 +125) +","+ (50 + 250 + 25) +")")
+        update_words(d3.select("#b2"), ["I", "thought", "it", "was ", "clear", "but", "you", "know", "..."],
+                     d3.scale.linear().domain([0,10]).range([0,1000]), 10);
+    }
+    draw("#lstm3", 200);
+    draw("#lstm2", 50);
+    draw("#lstm", 5);
+    draw("#lstm0", 1);
 
-
-var eventHandler = $({});
-// event_handler.bind("trigger", function() {})
-
-eventHandler.bind('cell_hovered', function (e, data) {
-    d3.select("#lstm").selectAll('.cell_' + data.cell).classed('hover', data.active);
+    
 });
 
-pcplot.bind_event_handler(eventHandler);
-
-
-pcplot.redraw({});
-base = d3.select("#lstm").append("g").attr("id", "b2").attr("transform", "translate("+(50 +125) +","+ (50 + 250 + 25) +")")
-update_words(d3.select("#b2"), ["hello", "there", "this", "is", "the", "words"], d3.scale.linear().domain([0,10]).range([0,1000]), 10);
-
 animationIM("#im2latex");
+window.show = {}
+window.transform = {}
+function showfn(d) {
+    if (show == "pca") {
+        return d.vals;
+    } else {
+        return d.tsne;
+    }
+}
+
+window.plot_points = function plot_points(svg, x, y, zoom, data_vecs, font_size){
+
+    var dots = svg.selectAll('.dots')
+        .data(data_vecs, function(d){return d.word})
+    console.log(zoom.scale());
+    dots.exit().remove();
+    dots
+        // 
+        .transition()
+        .attr("transform", function(d) {
+            var scale = zoom.scale()*0.5;
+            if (d.marked) {
+                scale = zoom.scale()*1.5;
+            } 
+            return  "translate(" +x(showfn(d)[0])+","+y(showfn(d)[1])+")" + "scale(" + scale +")"; })
+        .style("font-weight", function(d) {
+            if (d.marked) {
+                return "bold";
+            } else {
+                return "";
+            }  } )
+        .attr("fill", function(d) {
+            if (d.marked) {
+                return "red";
+            } else {
+                return "black";
+            }  } );
+
+    dots
+        .enter()
+        .append("text")
+        .attr("class", "dots")
+
+        .text(function(d) { console.log("enter");return d.word; })
+        .attr("transform", function(d) { return "translate(" +x(showfn(d)[0])+","+y(showfn(d)[1])+")scale(0.5)"; })
+        .style("font-size", font_size + "pt")
+        .style("font-style", "sans-serif")
+        .on("click", function(d) { d.marked = true; plot_points(svg, x, y, zoom, data_vecs, font_size);} );
+}
+
+// $("#chart1").remove();
+// $("#bod").remove();
+// element.append("<div id='bod'></div>")
+// element.append("<svg id='chart1' height="+height+" width="+width+"></svg>");
+var container;
+
+function attach(container, data_vecs, font_size) {
+    var width = 1300
+    var height = 800
+    show = "t-sne"
+    var zoom;
+    var xex = d3.extent(data_vecs, function (d) {return showfn(d)[0];});
+    var yex = d3.extent(data_vecs, function (d) {return showfn(d)[1];});
+    var x = d3.scale.linear().domain(xex).range([200, width-200]);
+    var y = d3.scale.linear().domain(yex).range([200, height-200]);
+
+    function zoomed() {
+        plot_points(container, x, y, zoom, data_vecs, font_size);
+    }
+
+    zoom = d3.behavior.zoom()
+        .x(x).y(y)
+        .scaleExtent([1, 10])
+        .on("zoom", zoomed);
+
+    container = d3.select(container)
+        .append('g');
 
 
-// var mystack = stack()
-//     .on("activate", activate)
-//     .on("deactivate", deactivate);
 
-// var section = d3.selectAll("section"),
-//     follow = d3.select("#follow"),
-//     followAnchor = d3.select("#follow-anchor"),
-//     deptree = d3.select("#deptree"),
-//     followIndex = section[0].indexOf(follow.node()),
-//     deptreeIndex = section[0].indexOf(deptree.node());
 
-// function refollow() {
-//   followAnchor.style("top", (followIndex + (1 - mystack.scrollRatio()) / 2 - d3.event.offset) * 100 + "%");
-// }
+    container.call(zoom);
 
-// function activate(d, i) {
-//   if (i === followIndex) mystack.on("scroll.follow", refollow);
-//   if (i === deptreeIndex) startLorenz();
-// }
+    
+    
+    var xAxis = d3.svg.axis()
+        .orient("top")
+        .scale(x);
 
-// function deactivate(d, i) {
-//   if (i === followIndex) mystack.on("scroll.follow", null);
-//   if (i === deptreeIndex) stopLorenz();
-// }
+    var yAxis = d3.svg.axis()
+        .orient("left")
+        .scale(y);
+    
+    container.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .style("stroke", "black")
+        .style("fill", "white")
+    ;
+    // container.call(yAxis)
+    plot_points(container, x, y, zoom, data_vecs, font_size);    
+    // function make_button(t, f) {
+    //     return d3.select('#bod').append("div").append('a')
+    //         .text(t)
+    //         .on('click', f);
+    // }
+    // make_button("sne", function(){return plot_points(d3, container);})
+    // make_button("pca", function(){return plot_points(d3, container);})
+}
 
-// var lorenzInterval;
 
-// function startLorenz() {
-//   var δτ = 0.003,
-//       ρ = 28,
-//       σ = 10,
-//       β = 8 / 3,
-//       x = .5,
-//       y = .5,
-//       z = 10,
-//       n = 30;
 
-//   var width = 1280,
-//       height = 720;
 
-//   var canvas = d3.select("canvas")
-//       .style("position", "absolute")
-//       .style("top", 0)
-//       .style("left", 0)
-//       .style("width", "100%")
-//       .style("height", "100%")
-//       .attr("width", width)
-//       .attr("height", height);
+d3.json("words.json", function(error, data) {
+    attach("#wordvecs", data, 10);
+});
+d3.json("words.json", function(error, data) {
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].word != "know" && data[i].word != "think" && data[i].word != "are" && data[i].word != "want" && data[i].word != "believe") {
+            data[i].word = "";
+            
+        } else {
+            console.log("here");
+        }
+        data.push({word: "RNN", tsne: [0,0]});
+    }
+    attach("#score",data, 30);
+});
 
-//   var color = d3.scale.linear()
-//       .domain([0, 20, 30, 50])
-//       .range(["yellow", "orange", "brown", "purple"])
-//       .interpolate(d3.interpolateHcl);
-
-//   var context = canvas.node().getContext("2d");
-
-//   context.lineWidth = .2;
-//   context.fillStyle = "rgba(0,0,0,.03)";
-
-//   d3.timer(function() {
-//     context.save();
-//     context.globalCompositeOperation = "lighter";
-//     context.translate(width / 2, height / 2);
-//     context.scale(12, 14);
-//     context.rotate(30);
-//     for (var i = 0; i < n; ++i) {
-//       context.strokeStyle = color(z);
-//       context.beginPath();
-//       context.moveTo(x, y);
-//       x += δτ * σ * (y - x);
-//       y += δτ * (x * (ρ - z) - y);
-//       z += δτ * (x * y - β * z);
-//       context.lineTo(x, y);
-//       context.stroke();
-//     }
-//     context.restore();
-//     return !lorenzInterval;
-//   });
-
-//   lorenzInterval = setInterval(function() {
-//     context.fillRect(0, 0, width, height);
-//   }, 100);
-// }
-
-// function stopLorenz() {
-//   lorenzInterval = clearInterval(lorenzInterval);
-// }
 

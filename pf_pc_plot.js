@@ -100,7 +100,7 @@ PCPlot.prototype.redraw = function (draw_options) {
   // --- changing nodes for pc_line
   pc_line.attr({
     "class": function (d) {return "pc_line cell_" + d.index;},
-      d: function (d) {console.log(d); console.log(that.options); return line(d.values);}
+      d: function (d) {return line(d.values);}
   }).style({
     opacity: line_opacity
   });
