@@ -65,7 +65,7 @@ function animationIM(base) {
             .transition()
             .duration(200)
             .style("font-weight", "normal")
-            .style("font-size", "30")
+            .style("font-size", "25")
             .attr("transform", function(d, i) {
                 return "translate("+ xScale(d.num)+ "," + yScale(1)+ ") " + "rotate(-50)";})  
         
