@@ -158,7 +158,7 @@ var container;
 
 function attach(container, data_vecs, font_size) {
     var width = 1300
-    var height = 800
+    var height = 700
     show = "t-sne"
     var zoom;
     var xex = d3.extent(data_vecs, function (d) {return showfn(d)[0];});
