@@ -27,7 +27,7 @@ var conll = "1	President	President	PROPN	NNP	Number=Sing	2	compound	_	_\n\
 var data = parseConll(conll)
 svg = d3.select("#deptree");
 svg.selectAll('text, path').remove();
-svg.attr('width', 1000).attr('height', 500);
+svg.attr('width', 1500).attr('height', 500);
 base = svg.append("g").attr("transform", "scale(0.5)");
 treeInfo(data);
 drawWords(base, data);
