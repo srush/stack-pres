@@ -141,7 +141,7 @@ window.plot_points = function plot_points(svg, x, y, zoom, data_vecs, font_size)
         .append("text")
         .attr("class", "dots")
         .style("opacity", function(d) {
-            if(d.fade) { return 0.2; } else {return 1;}
+            if(d.fade) { return 0.05; } else {return 1;}
         })
         .text(function(d) { console.log("enter");return d.word; })
         .attr("transform", function(d) { return "translate(" +x(showfn(d)[0])+","+y(showfn(d)[1])+")scale(0.5)"; })
