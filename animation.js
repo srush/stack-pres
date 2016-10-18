@@ -140,7 +140,9 @@ window.plot_points = function plot_points(svg, x, y, zoom, data_vecs, font_size)
         .enter()
         .append("text")
         .attr("class", "dots")
-
+        .style("opacity", function(d) {
+            if(d.fade) { return 0.2; } else {return 1;}
+        })
         .text(function(d) { console.log("enter");return d.word; })
         .attr("transform", function(d) { return "translate(" +x(showfn(d)[0])+","+y(showfn(d)[1])+")scale(0.5)"; })
         .style("font-size", font_size + "pt")
@@ -195,8 +197,9 @@ function attach(container, data_vecs, font_size) {
         .attr("width", width)
         .attr("height", height)
         .style("stroke", "black")
-        .style("fill", "white")
-    ;
+        .style("fill", "white");
+
+
     // container.call(yAxis)
     plot_points(container, x, y, zoom, data_vecs, font_size);    
     // function make_button(t, f) {
@@ -216,14 +219,15 @@ d3.json("words.json", function(error, data) {
 });
 d3.json("words.json", function(error, data) {
     for (var i = 0; i < data.length; i++) {
-        if (data[i].word != "know" && data[i].word != "think" && data[i].word != "are" && data[i].word != "want" && data[i].word != "believe") {
-            data[i].word = "";
-            
+        if (data[i].word != "know" && data[i].word != "feel" && data[i].word != "are" && data[i].word != "want" && data[i].word != "believe") {
+            data[i].fade = true;
+
         } else {
-            console.log("here");
+            console.log(data[i]);
         }
-        data.push({word: "RNN", tsne: [0,0]});
+
     }
+    data.push({word: "RNN", vals: [0.0,0.0], tsne: [-5.0,8.0], marked: false});
     attach("#score",data, 30);
 });
 
